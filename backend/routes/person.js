@@ -15,19 +15,19 @@ const requireAuth = require("../middleware/requireAuth")
 
 router.use(requireAuth) // requires authentication and then calls next. if no authentication then it throws an error
 
-// to GET all templates
+// to GET all persons
 router.get("/", getPersons)
 
-// to GET a single template
+// to GET a single person
 router.get("/:id", getPerson)
 
-// POST a template
+// POST a person
 router.post("/", createPerson)
 
-// DELETE a template
+// DELETE a person
 router.delete("/:id", deletePerson)
 
-// UPDATE a template
+// UPDATE a person
 router.patch("/:id", updatePerson)
 
 
