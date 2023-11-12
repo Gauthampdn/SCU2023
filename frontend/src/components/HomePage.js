@@ -20,6 +20,13 @@ const endIcon = new L.Icon({
   popupAnchor: [1, -34],
 });
 
+const passengerIcon = new L.Icon({
+  iconUrl: './Pin-location.png',
+  iconSize: [25, 25],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+});
+
 const DraggableMarker = ({ content, initialPosition, onDrag }) => {
   const [position, setPosition] = useState(initialPosition);
   const eventHandlers = useMemo(() => ({
@@ -53,6 +60,8 @@ const HomePage = () => {
   const [price, setPrice] = useState('');
   const [processedCoordinates, setProcessedCoordinates] = useState([]);
   const [passengers, setPassengers] = useState([]);
+  const [selectedPassengerId, setSelectedPassengerId] = useState(null);
+
 
 
 
@@ -100,6 +109,7 @@ const HomePage = () => {
   }
 
   const handlePassengerCardClick = async (passenger) => {
+    setSelectedPassengerId(passenger._id);
     try {
       const payload = {
         userStart: startPosition,
@@ -132,6 +142,7 @@ const HomePage = () => {
     } catch (error) {
       console.error('Error:', error);
     }
+
   };
   
 
@@ -194,6 +205,7 @@ const HomePage = () => {
 
   const toggleSidebar = () => {
     setSidebarVisible(!sidebarVisible);
+    setSelectedPassengerId(null);
   };
 
   const colorOp = { color: 'lime' }
@@ -237,7 +249,55 @@ const HomePage = () => {
       dispatch({ type: "LOGIN", payload: updated })
     }
   };
-
+  const handleAccept = async (e, passengerId) => {
+    e.stopPropagation(); // Prevent triggering card click
+    // Send request to backend to update the passenger's status to accepted
+    try {
+      const response = await fetch(`http://localhost:4000/api/person`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ looking: false }) // Assuming you want to set 'looking' to false
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      // Handle successful response
+      console.log("Passenger accepted successfully");
+      // You might want to update the UI or state here
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+  
+  const handleDecline = async (e, passengerId) => {
+    e.stopPropagation(); // Prevent triggering card click
+  
+    // Send request to backend to update the passenger's status to declined
+    try {
+      const response = await fetch(`http://localhost:4000/api/person`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ looking: false }) // Assuming you want to set 'looking' to false
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      console.log("Passenger declined successfully");
+  
+      // Remove the passenger from the passengers array
+      setPassengers(prevPassengers => prevPassengers.filter(passenger => passenger._id !== passengerId));
+  
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+  
 
   return (
 
@@ -251,7 +311,21 @@ const HomePage = () => {
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
         <DraggableMarker content="Start Point" initialPosition={startPosition} onDrag={updateStartPosition} icon={startIcon} />
         <DraggableMarker content="End Point" initialPosition={endPosition} onDrag={updateEndPosition} icon={endIcon} />
-
+        {passengers.map(passenger => (
+  selectedPassengerId === passenger._id && (
+    <Marker
+      key={passenger._id}
+      position={[passenger.start.lat.$numberDecimal, passenger.start.lng.$numberDecimal]}
+      icon = {passengerIcon}
+    >
+       <Marker
+      key={passenger._id}
+      position={[passenger.end.lat.$numberDecimal, passenger.end.lng.$numberDecimal]}
+      icon = {passengerIcon}
+    ></Marker>
+      <Popup>{passenger.name}</Popup>
+    </Marker>
+  )))}
         {processedCoordinates.length > 0 && <Polyline pathOptions={colorOp} positions={processedCoordinates} color="blue" />}
       </MapContainer>
 
@@ -268,10 +342,17 @@ const HomePage = () => {
             <div className="passenger-cards-container">
               {passengers.map((passenger) => (
                 <div key={passenger._id} className="passenger-card" onClick={() => handlePassengerCardClick(passenger)}>
-                  <div className="passenger-name">Name: {passenger.name}</div>
-                  <div>Start: ({passenger.start.lat.$numberDecimal}, {passenger.start.lng.$numberDecimal})</div>
-                  <div>End: ({passenger.end.lat.$numberDecimal}, {passenger.end.lng.$numberDecimal})</div>
-                </div>
+                <div className="passenger-name">Name: {passenger.name}</div>
+                <div>Start: ({passenger.start.lat.$numberDecimal}, {passenger.start.lng.$numberDecimal})</div>
+                <div>End: ({passenger.end.lat.$numberDecimal}, {passenger.end.lng.$numberDecimal})</div>
+                <button className="accept-button" onClick={(e) => handleAccept(e, passenger._id)}>
+  Accept
+</button>
+<button className="decline-button" onClick={(e) => handleDecline(e, passenger._id)}>
+  Decline
+</button>
+              </div>
+
               ))}
             </div>
           )}

@@ -194,3 +194,43 @@ input[type="text"] {
   background-color: gray; /* Gray background on hover */
   /* You can also add other hover effects like changing the cursor, etc. */
 }
+
+.passenger-card {
+  /* Example styles, adjust as needed */
+  width: 300px;
+  padding: 10px;
+  margin: 5px;
+  border: 1px solid #ffffff;
+  border-radius: 5px;
+  
+}
+/* HomePage.css */
+.accept-button {
+  background-color: green;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  margin: 5px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.accept-button:hover {
+  background-color: darkgreen;
+}
+
+.decline-button {
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  margin: 5px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.decline-button:hover {
+  background-color: darkred;
+}
+
+
