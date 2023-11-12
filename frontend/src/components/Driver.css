@@ -16,6 +16,7 @@
   display: flex; /* To align text and icon */
   align-items: center; /* Vertical alignment */
   justify-content: center; /* Horizontal alignment */
+  width: auto;
 }
 
 .next-button svg {
