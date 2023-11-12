@@ -185,32 +185,36 @@ input[type="text"] {
 
 /* Add these styles for the passenger cards */
 .passenger-card {
-  background-color: lightgray; /* Light gray background */
-  /* Add other styling here as needed, like padding, margin, etc. */
+  background-color: lightgray;
+  padding: 10px;
+  margin: 5px 0; /* Adjust margin as needed */
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  width: 100%; /* Make the card a bit smaller horizontally */
+  box-sizing: border-box; /* Include padding and border in the width */
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch; /* Stretch children to fill the card */
 }
 
 .passenger-card:hover {
-  background-color: gray; /* Gray background on hover */
-  /* You can also add other hover effects like changing the cursor, etc. */
-}
-
-.passenger-card {
-  /* Example styles, adjust as needed */
-  width: 300px;
-  padding: 10px;
-  margin: 5px;
-  border: 1px solid #ffffff;
-  border-radius: 5px;
-  
+  background-color: #f0f0f0; /* Slightly darker on hover */
 }
 /* HomePage.css */
+.accept-button, .decline-button {
+  flex-grow: 1; /* Make buttons take equal space */
+  padding: 15px 10px; /* Increase padding for larger buttons */
+  font-size: 16px; /* Increase font size for better visibility */
+  margin: 5px 0; /* Adjust margin as needed */
+  width: 100%; /* Make buttons fill the card width */
+  box-sizing: border-box; /* Include padding and border in the width */
+}
+
 .accept-button {
   background-color: green;
   color: white;
   border: none;
-  padding: 5px 10px;
-  margin: 5px;
   cursor: pointer;
   border-radius: 5px;
 }
@@ -223,8 +227,6 @@ input[type="text"] {
   background-color: red;
   color: white;
   border: none;
-  padding: 5px 10px;
-  margin: 5px;
   cursor: pointer;
   border-radius: 5px;
 }
@@ -233,4 +235,7 @@ input[type="text"] {
   background-color: darkred;
 }
 
-
+.sidebar {
+  width: 320px; /* Adjust the width of the sidebar */
+  /* Other styles remain the same */
+}
