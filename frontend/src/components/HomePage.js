@@ -22,8 +22,8 @@ const endIcon = new L.Icon({
 
 const passengerIcon = new L.Icon({
   iconUrl: './Pin-location.png',
-  iconSize: [25, 25],
-  iconAnchor: [12, 41],
+  iconSize: [50, 50],
+  iconAnchor: [25, 41],
   popupAnchor: [1, -34],
 });
 
@@ -272,30 +272,11 @@ const HomePage = () => {
     }
   };
   
-  const handleDecline = async (e, passengerId) => {
+  const handleDecline = (e, passengerId) => {
     e.stopPropagation(); // Prevent triggering card click
   
-    // Send request to backend to update the passenger's status to declined
-    try {
-      const response = await fetch(`http://localhost:4000/api/person`, {
-        method: 'PATCH',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ looking: false }) // Assuming you want to set 'looking' to false
-      });
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      console.log("Passenger declined successfully");
-  
-      // Remove the passenger from the passengers array
-      setPassengers(prevPassengers => prevPassengers.filter(passenger => passenger._id !== passengerId));
-  
-    } catch (error) {
-      console.error('Error:', error);
-    }
+    // Filter out the declined passenger from the passengers array
+    setPassengers(prevPassengers => prevPassengers.filter(passenger => passenger._id !== passengerId));
   };
   
 
