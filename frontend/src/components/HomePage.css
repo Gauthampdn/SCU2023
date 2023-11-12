@@ -239,3 +239,29 @@ input[type="text"] {
   width: 320px; /* Adjust the width of the sidebar */
   /* Other styles remain the same */
 }
+.next-button {
+  background-color: #4CAF50; /* Green background */
+  color: white; /* White text */
+  padding: 10px 20px; /* Padding around the text */
+  margin: 10px 0; /* Margin at the top and bottom */
+  border: none; /* No border */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor on hover */
+  font-size: 16px; /* Font size */
+  transition: background-color 0.3s; /* Smooth transition for hover effect */
+}
+
+.next-button:hover {
+  background-color: #45a049; /* Darker shade of green on hover */
+}
+
+/* Add a media query for smaller screens if needed */
+@media screen and (max-width: 600px) {
+  .next-button {
+    width: 100%; /* Full width on small screens */
+    padding: 15px 0; /* Adjust padding */
+  }
+}
+.passenger-name{
+  text-align: center;
+}

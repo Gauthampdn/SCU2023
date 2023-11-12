@@ -307,8 +307,17 @@ const HomePage = () => {
     } catch (error) {
       console.error('Error:', error);
     }
-  };
+    const milesResponse = await fetch(/* API endpoint */);
+  const milesData = await milesResponse.json();
 
+  // Calculate carbon emissions saved
+  const emissionsSaved = calculateEmissionsSaved(milesData.miles);
+  console.log(`Emissions saved: ${emissionsSaved} kg CO2`);
+  };
+  function calculateEmissionsSaved(miles) {
+    const emissionFactor = 0.404; // Example factor, adjust as needed
+    return miles * emissionFactor;
+  }
   const handleDecline = (e, passengerId) => {
     e.stopPropagation(); // Prevent triggering card click
 
@@ -360,9 +369,7 @@ const HomePage = () => {
             <div className="passenger-cards-container">
               {passengers.map((passenger) => (
                 <div key={passenger._id} className="passenger-card" onClick={() => handlePassengerCardClick(passenger)}>
-                  <div className="passenger-name">Name: {passenger.name}</div>
-                  <div>Start: ({passenger.start.lat.$numberDecimal}, {passenger.start.lng.$numberDecimal})</div>
-                  <div>End: ({passenger.end.lat.$numberDecimal}, {passenger.end.lng.$numberDecimal})</div>
+                  <div className="passenger-name">{passenger.name}</div>
                   <button className="accept-button" onClick={(e) => handleAccept(e, passenger._id)}>
                     Accept
                   </button>
@@ -372,6 +379,7 @@ const HomePage = () => {
                 </div>
 
               ))}
+              <button className="next-button">Next</button> {/* Add this line */}
             </div>
           )}
 
