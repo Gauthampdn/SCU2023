@@ -75,7 +75,10 @@ const HomePage = () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ type: "passenger" })
+      body: JSON.stringify({
+        type: "passenger",
+        looking: "yes"
+      })
     });
   };
 
@@ -117,7 +120,7 @@ const HomePage = () => {
         passengerStart: { lat: passenger.start.lat.$numberDecimal, lng: passenger.start.lng.$numberDecimal },
         passengerEnd: { lat: passenger.end.lat.$numberDecimal, lng: passenger.end.lng.$numberDecimal }
       };
-  
+
       const response = await fetch('http://localhost:4000/api/data/driver', {
         credentials: 'include',
         method: 'POST',
@@ -126,11 +129,11 @@ const HomePage = () => {
         },
         body: JSON.stringify(payload),
       });
-  
+
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-  
+
 
       const data = await response.json();
       const originalCoordinates = data.result.trip.routes[0].points.coordinates;
@@ -144,7 +147,7 @@ const HomePage = () => {
     }
 
   };
-  
+
 
   const handleDriverClick = async () => {
 
@@ -194,8 +197,42 @@ const HomePage = () => {
   };
 
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     setLoading(true);
+
+
+    try {
+      const payload = {
+        start: startPosition,
+        end: endPosition
+      };
+
+      const response = await fetch('http://localhost:4000/api/data', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      const originalCoordinates = data.result.trip.routes[0].points.coordinates;
+
+      const flippedCoordinates = flipArrayValues(originalCoordinates);
+
+      setProcessedCoordinates(flippedCoordinates);
+      console.log(flippedCoordinates); // Use processedCoordinates as needed
+
+    } catch (error) {
+      console.error('Error:', error);
+    }
+
+
   };
 
   const handleCancel = () => {
@@ -271,14 +308,14 @@ const HomePage = () => {
       console.error('Error:', error);
     }
   };
-  
+
   const handleDecline = (e, passengerId) => {
     e.stopPropagation(); // Prevent triggering card click
-  
+
     // Filter out the declined passenger from the passengers array
     setPassengers(prevPassengers => prevPassengers.filter(passenger => passenger._id !== passengerId));
   };
-  
+
 
   return (
 
@@ -293,20 +330,20 @@ const HomePage = () => {
         <DraggableMarker content="Start Point" initialPosition={startPosition} onDrag={updateStartPosition} icon={startIcon} />
         <DraggableMarker content="End Point" initialPosition={endPosition} onDrag={updateEndPosition} icon={endIcon} />
         {passengers.map(passenger => (
-  selectedPassengerId === passenger._id && (
-    <Marker
-      key={passenger._id}
-      position={[passenger.start.lat.$numberDecimal, passenger.start.lng.$numberDecimal]}
-      icon = {passengerIcon}
-    >
-       <Marker
-      key={passenger._id}
-      position={[passenger.end.lat.$numberDecimal, passenger.end.lng.$numberDecimal]}
-      icon = {passengerIcon}
-    ></Marker>
-      <Popup>{passenger.name}</Popup>
-    </Marker>
-  )))}
+          selectedPassengerId === passenger._id && (
+            <Marker
+              key={passenger._id}
+              position={[passenger.start.lat.$numberDecimal, passenger.start.lng.$numberDecimal]}
+              icon={passengerIcon}
+            >
+              <Marker
+                key={passenger._id}
+                position={[passenger.end.lat.$numberDecimal, passenger.end.lng.$numberDecimal]}
+                icon={passengerIcon}
+              ></Marker>
+              <Popup>{passenger.name}</Popup>
+            </Marker>
+          )))}
         {processedCoordinates.length > 0 && <Polyline pathOptions={colorOp} positions={processedCoordinates} color="blue" />}
       </MapContainer>
 
@@ -323,16 +360,16 @@ const HomePage = () => {
             <div className="passenger-cards-container">
               {passengers.map((passenger) => (
                 <div key={passenger._id} className="passenger-card" onClick={() => handlePassengerCardClick(passenger)}>
-                <div className="passenger-name">Name: {passenger.name}</div>
-                <div>Start: ({passenger.start.lat.$numberDecimal}, {passenger.start.lng.$numberDecimal})</div>
-                <div>End: ({passenger.end.lat.$numberDecimal}, {passenger.end.lng.$numberDecimal})</div>
-                <button className="accept-button" onClick={(e) => handleAccept(e, passenger._id)}>
-  Accept
-</button>
-<button className="decline-button" onClick={(e) => handleDecline(e, passenger._id)}>
-  Decline
-</button>
-              </div>
+                  <div className="passenger-name">Name: {passenger.name}</div>
+                  <div>Start: ({passenger.start.lat.$numberDecimal}, {passenger.start.lng.$numberDecimal})</div>
+                  <div>End: ({passenger.end.lat.$numberDecimal}, {passenger.end.lng.$numberDecimal})</div>
+                  <button className="accept-button" onClick={(e) => handleAccept(e, passenger._id)}>
+                    Accept
+                  </button>
+                  <button className="decline-button" onClick={(e) => handleDecline(e, passenger._id)}>
+                    Decline
+                  </button>
+                </div>
 
               ))}
             </div>
@@ -342,12 +379,14 @@ const HomePage = () => {
             <>
               {loading ? (
                 <div className="loading">
+
                   <span className="loading-text">Finding Drivers...</span>
                   <div className="dot-container">
                     <div className="dot"></div>
                     <div className="dot"></div>
                     <div className="dot"></div>
                   </div>
+                  <button onClick={() => { setLoading(false);}}> Go back </button>
                 </div>
               ) : (
                 <>
