@@ -62,12 +62,15 @@ const HomePage = () => {
   const [passengers, setPassengers] = useState([]);
   const [selectedPassengerId, setSelectedPassengerId] = useState(null);
   const [miles, setMiles] = useState(0);
+  const [showEmissions, setShowEmissions] = useState(false);
 
 
 
 
 
-
+  const handleNextClick = () => {
+    setShowEmissions(true); // Show the emissions information
+  };
 
   const handlePassengerClick = async () => {
     setShowForm(true);
@@ -363,56 +366,59 @@ const HomePage = () => {
       </MapContainer>
 
       {sidebarVisible && (
-        <div className="sidebar">
-          {!showForm && passengers.length === 0 ? (
-            <>
-              <button className="sidebar-button driver" onClick={handleDriverClick}>Driver</button>
-              <button className="sidebar-button passenger" onClick={handlePassengerClick}>Passenger</button>
-            </>
-          ) : null}
+  <div className="sidebar">
+    {showEmissions ? (
+      <div className="emissions-info">
+        <h3>Emissions Saved</h3>
+        <p>{calculateEmissionsSaved()}</p>
+        {/* Add more information or actions as needed */}
+      </div>
+    ) : (
+      <>
+        {!showForm && passengers.length === 0 && (
+          <>
+            <button className="sidebar-button driver" onClick={handleDriverClick}>Driver</button>
+            <button className="sidebar-button passenger" onClick={handlePassengerClick}>Passenger</button>
+          </>
+        )}
 
-          {passengers.length > 0 && (
-            <div className="passenger-cards-container">
-              {passengers.map((passenger) => (
-                <div key={passenger._id} className="passenger-card" onClick={() => handlePassengerCardClick(passenger)}>
-                  <div className="passenger-name">{passenger.name}</div>
-                  <button className="accept-button" onClick={(e) => handleAccept(e, passenger._id)}>
-                    Accept
-                  </button>
-                  <button className="decline-button" onClick={(e) => handleDecline(e, passenger._id)}>
-                    Decline
-                  </button>
+        {passengers.length > 0 && (
+          <div className="passenger-cards-container">
+            {passengers.map((passenger) => (
+              <div key={passenger._id} className="passenger-card" onClick={() => handlePassengerCardClick(passenger)}>
+                <div className="passenger-name">{passenger.name}</div>
+                <button className="accept-button" onClick={(e) => handleAccept(e, passenger._id)}>Accept</button>
+                <button className="decline-button" onClick={(e) => handleDecline(e, passenger._id)}>Decline</button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {showForm && (
+          <>
+            {loading ? (
+              <div className="loading">
+                <span className="loading-text">Finding Drivers...</span>
+                <div className="dot-container">
+                  <div className="dot"></div>
+                  <div className="dot"></div>
+                  <div className="dot"></div>
                 </div>
+              </div>
+            ) : (
+              <>
+                <input type="text" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="Fare" defaultValue="0.00" />
+                <button className="continue-button" onClick={handleContinue}>Continue</button>
+                <button className="cancel-button" onClick={handleCancel}>Cancel</button>
+              </>
+            )}
+          </>
+        )}
+      </>
+    )}
+  </div>
+)}
 
-              ))}
-              <button className="next-button">Next</button> {/* Add this line */}
-            </div>
-          )}
-
-          {showForm ? (
-            <>
-              {loading ? (
-                <div className="loading">
-
-                  <span className="loading-text">Finding Drivers...</span>
-                  <div className="dot-container">
-                    <div className="dot"></div>
-                    <div className="dot"></div>
-                    <div className="dot"></div>
-                  </div>
-                  <button onClick={() => { setLoading(false);}}> Go back </button>
-                </div>
-              ) : (
-                <>
-                  <input type="text" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="Fare" defaultValue="0.00" />
-                  <button className="continue-button" onClick={handleContinue}>Continue</button>
-                  <button className="cancel-button" onClick={handleCancel}>Cancel</button>
-                </>
-              )}
-            </>
-          ) : null}
-        </div>
-      )}
 
     </div>
 
