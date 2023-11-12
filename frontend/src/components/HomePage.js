@@ -61,6 +61,8 @@ const HomePage = () => {
   const [processedCoordinates, setProcessedCoordinates] = useState([]);
   const [passengers, setPassengers] = useState([]);
   const [selectedPassengerId, setSelectedPassengerId] = useState(null);
+  const [miles, setMiles] = useState(0);
+
 
 
 
@@ -137,7 +139,7 @@ const HomePage = () => {
 
       const data = await response.json();
       const originalCoordinates = data.result.trip.routes[0].points.coordinates;
-
+      setMiles(data.result.trip.routes[0].totalDistance)
       const flippedCoordinates = flipArrayValues(originalCoordinates);
 
       setProcessedCoordinates(flippedCoordinates);
@@ -286,9 +288,11 @@ const HomePage = () => {
       dispatch({ type: "LOGIN", payload: updated })
     }
   };
+
+
+
   const handleAccept = async (e, passengerId) => {
-    e.stopPropagation(); // Prevent triggering card click
-    // Send request to backend to update the passenger's status to accepted
+
     try {
       const response = await fetch(`http://localhost:4000/api/person/${user._id}`, {
         credentials: 'include',
@@ -307,7 +311,9 @@ const HomePage = () => {
     } catch (error) {
       console.error('Error:', error);
     }
-    const milesResponse = await fetch(/* API endpoint */);
+
+
+  const milesResponse = await fetch(/* API endpoint */);
   const milesData = await milesResponse.json();
 
   // Calculate carbon emissions saved
