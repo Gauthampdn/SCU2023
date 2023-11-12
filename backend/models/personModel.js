@@ -15,16 +15,16 @@ const userSchema = new Schema({
     type: String,
     required: true
   },
-  type: {
+  type: { // driver or passenger
     type: String,
   },
-  looking: {
+  looking: { // looking for carpool or not
     type: String,
   },
-  start: {
+  start: { // start coords
     type: [Number], // Array of numbers
   },
-  end: {
+  end: { // end coords
     type: [Number], // Array of numbers
   }
 });

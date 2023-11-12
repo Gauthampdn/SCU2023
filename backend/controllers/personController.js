@@ -101,6 +101,7 @@ const updatePerson = async (req, res) => {
   }
 
   const existingPerson = await Person.findById(id);
+  
   if(!existingPerson){
     return res.status(404).json({error: "No such Person"});
   }
