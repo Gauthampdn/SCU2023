@@ -1,17 +1,14 @@
-import { useEffect } from "react";
-import { useAuthContext } from "../hooks/useAuthContext";
-
-
+import React, { useEffect } from 'react';
+import { useAuthContext } from '../hooks/useAuthContext';
+import './Login.css';
 
 const Login = () => {
-
-  const { dispatch } = useAuthContext()
+  const { dispatch } = useAuthContext();
 
   const handleButtonClick = () => {
     window.location.href = "http://localhost:4000/auth";
   };
 
-  
   useEffect(() => {
     const fetchUser = async () => {
       console.log("fetching user");
@@ -37,14 +34,22 @@ const Login = () => {
   }, [dispatch]);
   
 
-  return (
-    <div className="login">
-
-
-        <img onClick={handleButtonClick} src="/glog.png" alt="google login" className="hoverable-image" />
-        
+return (
+  <div className="login-container">
+    <div>
+      <img className="login-image" src='/gallery.jpg'></img>
     </div>
-  );
+    <div className="login-content">
+      <h1>Welcome to Caraoke</h1>
+      <img 
+        onClick={handleButtonClick} 
+        src="/gauth.jpeg" 
+        alt="google login" 
+        className="hoverable-image" 
+      />
+    </div>
+  </div>
+);
 }
 
 export default Login;

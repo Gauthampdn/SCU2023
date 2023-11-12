@@ -4,7 +4,7 @@ import L from 'leaflet';
 import './HomePage.css';
 import { useAuthContext } from "../hooks/useAuthContext";
 import NavBar from './NavBar';
-
+import { useLogout } from "../hooks/useLogout";
 
 
 
@@ -65,6 +65,9 @@ const HomePage = () => {
   const [showEmissions, setShowEmissions] = useState(false);
   const [showEmissionsPage, setShowEmissionsPage] = useState(false);
   const [userName, setUserName] = useState(""); // State to store the fetched name
+  const [showDriverInfo, setShowDriverInfo] = useState(false);
+const [driverName, setDriverName] = useState('');
+
 
   // Function to handle the fetch operation
   const fetchUserName = async () => {
@@ -77,8 +80,11 @@ const HomePage = () => {
         },
       });
       const data = await response.json();
+      
       console.log("hi", data)
       setUserName(data[0].name); // Updating the state with the fetched name
+      setDriverName(data[0].name); // Assuming the response has a 'name' field
+      setShowDriverInfo(true);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -351,11 +357,14 @@ const HomePage = () => {
     setPassengers(prevPassengers => prevPassengers.filter(passenger => passenger._id !== passengerId));
   };
 
-
+  const { logout } = useLogout()
+  const handleLogout = () => {
+    logout()
+  }
   return (
-
+    
     <div className='Driver'>
-      <div className="pull-tab" onClick={toggleSidebar}> </div>
+      <div className="pull-tab" onClick={toggleSidebar}>Click Me</div>
       <div className="instructions">
         Pick Start/End Point
       </div>
@@ -384,66 +393,74 @@ const HomePage = () => {
 
       {sidebarVisible && (
         <div className="sidebar">
-          {!showEmissionsPage ? (
-            <>
-              {!showForm && passengers.length === 0 ? (
-                <>
-                  <button className="sidebar-button driver" onClick={handleDriverClick}>Driver</button>
-                  <button className="sidebar-button passenger" onClick={handlePassengerClick}>Passenger</button>
-                </>
-              ) : null}
-
-              {passengers.length > 0 && (
-                <div className="passenger-cards-container">
-                  {passengers.map((passenger) => (
-                    <div key={passenger._id} className="passenger-card" onClick={() => handlePassengerCardClick(passenger)}>
-                      <div className="passenger-name">{passenger.name}</div>
-                      <button className="accept-button" onClick={(e) => handleAccept(e, passenger._id)}>
-                        Accept
-                      </button>
-                      <button className="decline-button" onClick={(e) => handleDecline(e, passenger._id)}>
-                        Decline
-                      </button>
+        <button onClick={handleLogout} className="logout-button">Logout</button>
+        {showDriverInfo ? (
+          <div className="driver-info">
+            <p>Your driver {driverName} is on the way!</p>
+          </div>
+        ) : (
+          <>
+            {!showForm && passengers.length === 0 ? (
+              <>
+                <button className="sidebar-button driver" onClick={handleDriverClick}>Driver</button>
+                <button className="sidebar-button passenger" onClick={handlePassengerClick}>Passenger</button>
+              </>
+            ) : null}
+      
+            {passengers.length > 0 && (
+              <div className="passenger-cards-container">
+                {passengers.map((passenger) => (
+                  <div key={passenger._id} className="passenger-card" onClick={() => handlePassengerCardClick(passenger)}>
+                    <div className="passenger-name">{passenger.name}</div>
+                    <button className="accept-button" onClick={(e) => handleAccept(e, passenger._id)}>
+                      Accept
+                    </button>
+                    <button className="decline-button" onClick={(e) => handleDecline(e, passenger._id)}>
+                      Decline
+                    </button>
+                  </div>
+                ))}
+                <button className="next-button" onClick={handleNextClick}>
+                  Next →
+                </button>
+              </div>
+            )}
+      
+            {showForm && (
+              <>
+                {loading ? (
+                  <div className="loading">
+                    <span className="loading-text">Finding Drivers...</span>
+                    <div className="dot-container">
+                      <div className="dot"></div>
+                      <div className="dot"></div>
+                      <div className="dot"></div>
                     </div>
-                  ))}
-                  <button className="next-button" onClick={handleNextClick}>
-                    Next →
-                  </button>
-                </div>
-              )}
-
-              {showForm && (
-                <>
-                  {loading ? (
-                    <div className="loading">
-                      <span className="loading-text">Finding Drivers...</span>
-                      <div className="dot-container">
-                        <div className="dot"></div>
-                        <div className="dot"></div>
-                        <div className="dot"></div>
-                      </div>
-                      <button onClick={fetchUserName}>Fetch User Name</button> {/* The added button */}
-                      {userName && <p>{userName}</p>} {/* Displaying the fetched name */}
-                    </div>
-                  ) : (
-                    <>
-                      <input type="text" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="Fare" defaultValue="0.00" />
-                      <button className="continue-button" onClick={handleContinue}>Continue</button>
-                      <button className="cancel-button" onClick={handleCancel}>Cancel</button>
-                    </>
-                  )}
-                </>
-              )}
-            </>
-          ) : (
-            <div className="emissions-saved">
-              <img src="/earth.png" alt="Earth Logo" className="earth-logo" />
-              <h2>Emissions Saved</h2>
-              <p>{`You saved ${(0.404 * miles).toFixed(3)} kg CO2 by carpooling!`}</p>
-              {/* Add icon and additional text as needed */}
-            </div>
-          )}
-        </div>
+                    <button className = "refresh-button" onClick={fetchUserName}>Refresh</button> {/* The added button */}
+                    {userName && <p>{userName}</p>} {/* Displaying the fetched name */}
+                  </div>
+                ) : (
+                  <>
+                    <input type="text" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="Fare" defaultValue="0.00" />
+                    <button className="continue-button" onClick={handleContinue}>Continue</button>
+                    <button className="cancel-button" onClick={handleCancel}>Cancel</button>
+                  </>
+                )}
+              </>
+            )}
+      
+            {showEmissionsPage && (
+              <div className="emissions-saved">
+                <img src="/earth.png" alt="Earth Logo" className="earth-logo" />
+                <h2>Emissions Saved</h2>
+                <p>{`You saved ${(0.404 * miles).toFixed(3)} kg CO2 by carpooling!`}</p>
+                {/* Add icon and additional text as needed */}
+              </div>
+            )}
+          </>
+        )}
+      </div>
+      
       )}
     </div>
   );
