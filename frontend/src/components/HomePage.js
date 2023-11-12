@@ -64,8 +64,26 @@ const HomePage = () => {
   const [miles, setMiles] = useState(0);
   const [showEmissions, setShowEmissions] = useState(false);
   const [showEmissionsPage, setShowEmissionsPage] = useState(false);
+  const [userName, setUserName] = useState(""); // State to store the fetched name
 
-  
+  // Function to handle the fetch operation
+  const fetchUserName = async () => {
+    try {
+      const response = await fetch(`http://localhost:4000/api/person/driver/${user._id}`, {
+        credentials: 'include',
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await response.json();
+      console.log("hi", data)
+      setUserName(data.name); // Updating the state with the fetched name
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
 
 
 
@@ -89,7 +107,6 @@ const HomePage = () => {
       },
       body: JSON.stringify({
         type: "passenger",
-        looking: "yes"
       })
     });
   };
@@ -150,7 +167,7 @@ const HomePage = () => {
       const data = await response.json();
       const originalCoordinates = data.result.trip.routes[0].points.coordinates;
       setMiles(data.result.trip.routes[0].totalDistance)
-      console.log("num of miles = " , data.result.trip.routes[0].totalDistance)
+      console.log("num of miles = ", data.result.trip.routes[0].totalDistance)
       const flippedCoordinates = flipArrayValues(originalCoordinates);
 
       setProcessedCoordinates(flippedCoordinates);
@@ -311,7 +328,7 @@ const HomePage = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ looking: false }) // Assuming you want to set 'looking' to false
+        body: JSON.stringify({ looking: passengerId }) // Assuming you want to set 'looking' to false
       });
       if (!response.ok) {
         throw new Error('Network response was not ok');
@@ -324,16 +341,6 @@ const HomePage = () => {
     }
 
 
-  // const milesResponse = await fetch(/* API endpoint */);
-  // const milesData = await milesResponse.json();
-
-  // // Calculate carbon emissions saved
-  // const emissionsSaved = calculateEmissionsSaved(milesData.miles);
-  // console.log(`Emissions saved: ${emissionsSaved} kg CO2`);
-  // };
-  // function calculateEmissionsSaved(miles) {
-  //   const emissionFactor = 0.404; // Example factor, adjust as needed
-  //   return miles * emissionFactor;
   }
 
 
@@ -415,6 +422,8 @@ const HomePage = () => {
                         <div className="dot"></div>
                         <div className="dot"></div>
                       </div>
+                      <button onClick={fetchUserName}>Fetch User Name</button> {/* The added button */}
+                      {userName && <p>{userName}</p>} {/* Displaying the fetched name */}
                     </div>
                   ) : (
                     <>

@@ -28,6 +28,19 @@ const getDrivers = async (req, res) => {
   res.status(200).json(passengers);
 };
 
+const getDriverName = async (req, res) => {
+
+  const {id} = req.params
+
+  // The key addition here is the type object condition in the query
+  const passengers = await Person.find({ looking: id }).sort({ createdAt: -1 });
+
+  res.status(200).json(passengers);
+};
+
+
+
+
 
 // get a single Person
 
@@ -141,5 +154,6 @@ module.exports = {
   deletePerson,
   updatePerson,
   getPassengers,
-  getDrivers
+  getDrivers,
+  getDriverName
 }

@@ -9,7 +9,8 @@ const {
   deletePerson,
   updatePerson,
   getPassengers,
-  getDrivers
+  getDrivers,
+  getDriverName
 
 } = require("../controllers/personController")
 
@@ -35,6 +36,9 @@ router.delete("/:id", deletePerson)
 
 // UPDATE a person
 router.patch("/:id", updatePerson)
+
+router.get("/driver/:id", getDriverName)
+
 
 
 
