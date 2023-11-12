@@ -140,6 +140,7 @@ const HomePage = () => {
       const data = await response.json();
       const originalCoordinates = data.result.trip.routes[0].points.coordinates;
       setMiles(data.result.trip.routes[0].totalDistance)
+      console.log("num of miles = " , data.result.trip.routes[0].totalDistance)
       const flippedCoordinates = flipArrayValues(originalCoordinates);
 
       setProcessedCoordinates(flippedCoordinates);
@@ -313,17 +314,19 @@ const HomePage = () => {
     }
 
 
-  const milesResponse = await fetch(/* API endpoint */);
-  const milesData = await milesResponse.json();
+  // const milesResponse = await fetch(/* API endpoint */);
+  // const milesData = await milesResponse.json();
 
-  // Calculate carbon emissions saved
-  const emissionsSaved = calculateEmissionsSaved(milesData.miles);
-  console.log(`Emissions saved: ${emissionsSaved} kg CO2`);
-  };
-  function calculateEmissionsSaved(miles) {
-    const emissionFactor = 0.404; // Example factor, adjust as needed
-    return miles * emissionFactor;
+  // // Calculate carbon emissions saved
+  // const emissionsSaved = calculateEmissionsSaved(milesData.miles);
+  // console.log(`Emissions saved: ${emissionsSaved} kg CO2`);
+  // };
+  // function calculateEmissionsSaved(miles) {
+  //   const emissionFactor = 0.404; // Example factor, adjust as needed
+  //   return miles * emissionFactor;
   }
+
+
   const handleDecline = (e, passengerId) => {
     e.stopPropagation(); // Prevent triggering card click
 
