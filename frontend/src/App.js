@@ -3,16 +3,20 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import './App.css'
+import pinLocation from 'Pin-location.png';
+
+
+const defaultCenter = { lat: 37.34, lng: -121.938130 };
 
 const startIcon = new L.Icon({
-  iconUrl: 'start-icon.png', // Replace with your start point icon URL
+  iconUrl: pinLocation, // Replace with your start point icon URL
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
 });
 
 const endIcon = new L.Icon({
-  iconUrl: 'end-icon.png', // Replace with your end point icon URL
+  iconUrl: pinLocation, // Replace with your end point icon URL
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
@@ -49,8 +53,8 @@ const DraggableMarker = ({ content, initialPosition, onDrag }) => {
 };
 
 const App = () => {
-  const [startPosition, setStartPosition] = useState(null);
-  const [endPosition, setEndPosition] = useState(null);
+  const [startPosition, setStartPosition] = useState(defaultCenter);
+const [endPosition, setEndPosition] = useState(defaultCenter);
   const [isSettingEndPoint, setIsSettingEndPoint] = useState(false);
   const [showSidebar, setShowSidebar] = useState(false);
 
