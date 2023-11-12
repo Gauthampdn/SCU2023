@@ -32,8 +32,8 @@ passport.use(new GoogleStrategy({
           name: profile.given_name,
           type: "passenger",
           looking: "yes",
-          start: [0,0],
-          end: [0,0]
+          start: { lat: 37.34, lng: -121.938130},
+          end: { lat: 37.34, lng: -121.938130}
         });
 
         await user.save();

@@ -3,24 +3,25 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import './HomePage.css'
-import pinLocation from 'Pin-location.png';
+import { useAuthContext } from "../hooks/useAuthContext";
 
 
-const defaultCenter = { lat: 37.34, lng: -121.938130 };
 
 const startIcon = new L.Icon({
-  iconUrl: "pinLocation", // Replace with your start point icon URL
+  iconUrl: "/Pin-location.png", // Replace with your start point icon URL
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
 });
 
 const endIcon = new L.Icon({
-  iconUrl: "pinLocation", // Replace with your end point icon URL
+  iconUrl: "/Pin-location.png", // Replace with your end point icon URL
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
 });
+
+
 const DraggableMarker = ({ content, initialPosition, onDrag }) => {
   const [position, setPosition] = useState(initialPosition);
 
@@ -53,8 +54,17 @@ const DraggableMarker = ({ content, initialPosition, onDrag }) => {
 };
 
 const HomePage = () => {
+
+  const { user } = useAuthContext();
+
+  const defaultCenter = { lat: user.start.lat.$numberDecimal, lng: user.start.lng.$numberDecimal };
+
+
+  console.log(user.start.lat.$numberDecimal);
+  console.log(user.start.lng.$numberDecimal);
+
   const [startPosition, setStartPosition] = useState(defaultCenter);
-const [endPosition, setEndPosition] = useState(defaultCenter);
+  const [endPosition, setEndPosition] = useState(defaultCenter);
   const [isSettingEndPoint, setIsSettingEndPoint] = useState(false);
   const [showSidebar, setShowSidebar] = useState(false);
 
@@ -65,17 +75,22 @@ const [endPosition, setEndPosition] = useState(defaultCenter);
   };
   const updateStartPosition = (newPosition) => {
     setStartPosition(newPosition);
+    console.log(startPosition)
+
   };
 
   const updateEndPosition = (newPosition) => {
     setEndPosition(newPosition);
-  };
+    console.log(endPosition);
+    };
+
+
   return (
     <div className='Driver'>
       <div className="instructions">
         {isSettingEndPoint ? 'Pick the End Point' : 'Pick the Start Point'}
       </div>
-      <MapContainer center={[37.34, -121.938130]} zoom={13} style={{ height: '100vh', width: '100vw' }}>
+      <MapContainer center={[user.start.lat.$numberDecimal, user.start.lng.$numberDecimal]} zoom={13} style={{ height: '100vh', width: '100vw' }}>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

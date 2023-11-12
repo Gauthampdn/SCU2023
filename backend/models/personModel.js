@@ -1,6 +1,19 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
+
+const coords = new Schema({
+  lat: {
+    type: Schema.Types.Decimal128,
+    required: true,
+  },
+  lng: {
+    type: Schema.Types.Decimal128, 
+    required: true
+  }
+});
+
+
 const userSchema = new Schema({
   email: {
     type: String,
@@ -22,10 +35,10 @@ const userSchema = new Schema({
     type: String,
   },
   start: { // start coords
-    type: [Number], // Array of numbers
+    type: coords, // Array of numbers
   },
   end: { // end coords
-    type: [Number], // Array of numbers
+    type: coords, // Array of numbers
   }
 });
 
