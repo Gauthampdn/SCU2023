@@ -1,5 +1,5 @@
 import React, { useState, useRef, useMemo } from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import L from 'leaflet';
 import './HomePage.css';
 import { useAuthContext } from "../hooks/useAuthContext";
@@ -50,31 +50,57 @@ const HomePage = () => {
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [price, setPrice] = useState('');
+  const [processedCoordinates, setProcessedCoordinates] = useState([]);
+
 
   const handlePassengerClick = () => {
     setShowForm(true);
   };
-  const handleDriverClick = async () => {
-    try {
-      const response = await fetch('http://localhost:4000/api/data', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        // If you need to send any data to the server, include it in the body
-        // body: JSON.stringify({ yourDataKey: yourDataValue }),
-      });
-  
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
+
+  function flipArrayValues(array) {
+    return array.map(subArray => {
+      if (Array.isArray(subArray) && subArray.length === 2) {
+        return [subArray[1], subArray[0]];
       }
-  
-      const data = await response.json();
-      console.log(data.result.trip.routes[0].points.coordinates); // Process the data as needed
-    } catch (error) {
-      console.error('Error:', error);
+      return subArray;
+    });
+  }
+
+
+const handleDriverClick = async () => {
+  try {
+    const payload = {
+      start: startPosition,
+      end: endPosition
+    };
+
+    const response = await fetch('http://localhost:4000/api/data', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
     }
-  };
+
+    const data = await response.json();
+    const originalCoordinates = data.result.trip.routes[0].points.coordinates;
+
+    
+    const flippedCoordinates = flipArrayValues(originalCoordinates);
+
+    setProcessedCoordinates(flippedCoordinates);
+    console.log(flippedCoordinates); // Use processedCoordinates as needed
+
+
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
   
   
 
@@ -91,6 +117,7 @@ const HomePage = () => {
     setSidebarVisible(!sidebarVisible);
   };
 
+  const redOptions = { color: 'red' }
 
 
   const updateStartPosition = async (newPosition) => {
@@ -144,6 +171,8 @@ const updateEndPosition = async (newPosition) => {
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
         <DraggableMarker content="Start Point" initialPosition={startPosition} onDrag={updateStartPosition} icon={startIcon} />
         <DraggableMarker content="End Point" initialPosition={endPosition} onDrag={updateEndPosition} icon={endIcon} />
+        
+        {processedCoordinates.length > 0 && <Polyline pathOptions= {redOptions} positions={processedCoordinates} color="blue" />}
       </MapContainer>
 
       {sidebarVisible && (

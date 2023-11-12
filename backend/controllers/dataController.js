@@ -5,6 +5,8 @@ const postdata = async (req, res) => {
   const hashToken = process.env.HASHTOKEN;
   const tokenUrl = `https://api.iq.inrix.com/auth/v1/appToken?appId=${appId}&hashToken=${hashToken}`;
 
+  const { start, end } = req.body; // Extracting start and end from request body
+
   try {
     const tokenResponse = await fetch(tokenUrl);
     if (!tokenResponse.ok) {
@@ -14,7 +16,7 @@ const postdata = async (req, res) => {
     const tokenData = await tokenResponse.json();
     const appToken = tokenData.result.token;
 
-    const routeUrl = `https://api.iq.inrix.com/findRoute?wp_1=37.770581%2C-122.442550&wp_2=37.765297%2C-122.442527&routeOutputFields=B%2CM%2CP%2CS%2CW&format=json`;
+    const routeUrl = `https://api.iq.inrix.com/findRoute?wp_1=${start.lat},${start.lng}&wp_2=${end.lat},${end.lng}&routeOutputFields=B%2CM%2CP%2CS%2CW&format=json`;
 
 
     const routeResponse = await fetch(routeUrl, {
