@@ -340,7 +340,6 @@ input[type="text"] {
 }
 
 .logout-button {
-  margin-left: 20px; 
   padding: 5px 10px; 
   background-color: #dc3545; 
   color: white; 
