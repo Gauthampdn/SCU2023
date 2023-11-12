@@ -29,7 +29,11 @@ passport.use(new GoogleStrategy({
         user = new User({
           email: profile.email,
           id: profile.id,
-          name: profile.given_name
+          name: profile.given_name,
+          type: "passenger",
+          looking: "yes",
+          start: [0,0],
+          end: [0,0]
         });
 
         await user.save();
