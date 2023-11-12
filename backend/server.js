@@ -2,7 +2,6 @@
 // environment vars
 require("dotenv").config()
 
-
 const express = require("express")
 const mongoose = require("mongoose")
 const personRoutes = require("./routes/person")
@@ -18,6 +17,10 @@ const app = express()
 // middleware
 app.use(express.json()) // to get req body
 
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true
+}));
 
 app.use(session({
   secret: 'keyboard cat',
