@@ -1,0 +1,54 @@
+.Driver {
+  position: relative;
+  height: 100vh; /* Full height of the viewport */
+}
+.next-button {
+  position: absolute;
+  bottom: 50px;
+  right: 55px;
+  background-color: green; /* Green background */
+  color: white; /* White text */
+  border: none; /* Remove default border */
+  border-radius: 5px; /* Rounded corners */
+  padding: 15px 30px; /* Larger padding for a bigger button */
+  font-size: 18px; /* Larger font size */
+  cursor: pointer; /* Pointer cursor on hover */
+  display: flex; /* To align text and icon */
+  align-items: center; /* Vertical alignment */
+  justify-content: center; /* Horizontal alignment */
+}
+
+.next-button svg {
+  margin-left: 10px; /* Space between text and icon */
+}
+
+.instructions {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.9);
+  text-align: center;
+  padding: 10px;
+  font-size: 20px; /* Adjust font size as needed */
+  z-index: 1000;
+}
+
+.marker {
+  width: 30px;
+  height: 30px;
+  color: white;
+  text-align: center;
+  line-height: 30px;
+  border-radius: 50%;
+  z-index: 1000;
+}
+
+.start-marker {
+  background-color: green;
+  z-index: 1000;
+}
+
+.end-marker {
+  background-color: red;
+  z-index: 1000;
+}

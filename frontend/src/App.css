@@ -1,0 +1,31 @@
+/* src/App.css */
+
+nav ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+nav ul li {
+  display: inline;
+  margin-right: 20px;
+}
+
+.hero-banner {
+  background-color: #f0f0f0;
+  padding: 20px;
+  text-align: center;
+}
+
+.button-group {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.button-group button {
+  margin: 0 10px;
+  padding: 10px 20px;
+}
+
+
+
+
