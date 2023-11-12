@@ -63,6 +63,9 @@ const HomePage = () => {
   const [selectedPassengerId, setSelectedPassengerId] = useState(null);
   const [miles, setMiles] = useState(0);
   const [showEmissions, setShowEmissions] = useState(false);
+  const [showEmissionsPage, setShowEmissionsPage] = useState(false);
+
+  
 
 
 
@@ -70,6 +73,10 @@ const HomePage = () => {
 
   const handleNextClick = () => {
     setShowEmissions(true); // Show the emissions information
+    const emissionsSaved = 0.404 * miles;
+    console.log(`Emissions saved: ${emissionsSaved} kg CO2`);
+    setShowEmissionsPage(true);
+
   };
 
   const handlePassengerClick = async () => {
@@ -369,62 +376,67 @@ const HomePage = () => {
       </MapContainer>
 
       {sidebarVisible && (
-  <div className="sidebar">
-    {showEmissions ? (
-      <div className="emissions-info">
-        <h3>Emissions Saved</h3>
-        <p>{calculateEmissionsSaved()}</p>
-        {/* Add more information or actions as needed */}
-      </div>
-    ) : (
-      <>
-        {!showForm && passengers.length === 0 && (
-          <>
-            <button className="sidebar-button driver" onClick={handleDriverClick}>Driver</button>
-            <button className="sidebar-button passenger" onClick={handlePassengerClick}>Passenger</button>
-          </>
-        )}
+        <div className="sidebar">
+          {!showEmissionsPage ? (
+            <>
+              {!showForm && passengers.length === 0 ? (
+                <>
+                  <button className="sidebar-button driver" onClick={handleDriverClick}>Driver</button>
+                  <button className="sidebar-button passenger" onClick={handlePassengerClick}>Passenger</button>
+                </>
+              ) : null}
 
-        {passengers.length > 0 && (
-          <div className="passenger-cards-container">
-            {passengers.map((passenger) => (
-              <div key={passenger._id} className="passenger-card" onClick={() => handlePassengerCardClick(passenger)}>
-                <div className="passenger-name">{passenger.name}</div>
-                <button className="accept-button" onClick={(e) => handleAccept(e, passenger._id)}>Accept</button>
-                <button className="decline-button" onClick={(e) => handleDecline(e, passenger._id)}>Decline</button>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {showForm && (
-          <>
-            {loading ? (
-              <div className="loading">
-                <span className="loading-text">Finding Drivers...</span>
-                <div className="dot-container">
-                  <div className="dot"></div>
-                  <div className="dot"></div>
-                  <div className="dot"></div>
+              {passengers.length > 0 && (
+                <div className="passenger-cards-container">
+                  {passengers.map((passenger) => (
+                    <div key={passenger._id} className="passenger-card" onClick={() => handlePassengerCardClick(passenger)}>
+                      <div className="passenger-name">{passenger.name}</div>
+                      <button className="accept-button" onClick={(e) => handleAccept(e, passenger._id)}>
+                        Accept
+                      </button>
+                      <button className="decline-button" onClick={(e) => handleDecline(e, passenger._id)}>
+                        Decline
+                      </button>
+                    </div>
+                  ))}
+                  <button className="next-button" onClick={handleNextClick}>
+                    Next →
+                  </button>
                 </div>
-              </div>
-            ) : (
-              <>
-                <input type="text" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="Fare" defaultValue="0.00" />
-                <button className="continue-button" onClick={handleContinue}>Continue</button>
-                <button className="cancel-button" onClick={handleCancel}>Cancel</button>
-              </>
-            )}
-          </>
-        )}
-      </>
-    )}
-  </div>
-)}
+              )}
 
-
+              {showForm && (
+                <>
+                  {loading ? (
+                    <div className="loading">
+                      <span className="loading-text">Finding Drivers...</span>
+                      <div className="dot-container">
+                        <div className="dot"></div>
+                        <div className="dot"></div>
+                        <div className="dot"></div>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <input type="text" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="Fare" defaultValue="0.00" />
+                      <button className="continue-button" onClick={handleContinue}>Continue</button>
+                      <button className="cancel-button" onClick={handleCancel}>Cancel</button>
+                    </>
+                  )}
+                </>
+              )}
+            </>
+          ) : (
+            <div className="emissions-saved">
+              <img src="/earth.png" alt="Earth Logo" className="earth-logo" />
+              <h2>Emissions Saved</h2>
+              <p>{`You saved ${(0.404 * miles).toFixed(3)} kg CO2 by carpooling!`}</p>
+              {/* Add icon and additional text as needed */}
+            </div>
+          )}
+        </div>
+      )}
     </div>
-
   );
 };
 
