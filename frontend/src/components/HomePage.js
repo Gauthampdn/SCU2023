@@ -253,9 +253,9 @@ const HomePage = () => {
     e.stopPropagation(); // Prevent triggering card click
     // Send request to backend to update the passenger's status to accepted
     try {
-      const response = await fetch(`http://localhost:4000/api/person`, {
-        method: 'PATCH',
+      const response = await fetch(`http://localhost:4000/api/person/${user._id}`, {
         credentials: 'include',
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
