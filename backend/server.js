@@ -6,6 +6,8 @@ const express = require("express")
 const mongoose = require("mongoose")
 const personRoutes = require("./routes/person")
 const authRoutes = require("./routes/auth")
+const dataRoutes = require("./routes/data")
+
 const session = require('express-session');
 const passport = require("passport");
 
@@ -42,6 +44,8 @@ app.use((req, res, next) => {
 //routes
 app.use("/auth", authRoutes)
 app.use("/api/person", personRoutes)
+app.use("/api/data", dataRoutes)
+
 
 
 // connect to db

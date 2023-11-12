@@ -14,7 +14,7 @@ const coords = new Schema({
 });
 
 
-const userSchema = new Schema({
+const personSchema = new Schema({
   email: {
     type: String,
     required: true,
@@ -45,4 +45,4 @@ const userSchema = new Schema({
 // Custom validation function to ensure only two numbers are in the array
 
 
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.model("Person", personSchema);
