@@ -7,7 +7,9 @@ const {
   getPerson,
   getPersons,
   deletePerson,
-  updatePerson
+  updatePerson,
+  getPassengers,
+  getDrivers
 
 } = require("../controllers/personController")
 
@@ -17,6 +19,10 @@ router.use(requireAuth) // requires authentication and then calls next. if no au
 
 // to GET all persons
 router.get("/", getPersons)
+
+router.get("/passengers", getPassengers)
+
+router.get("/drivers", getDrivers)
 
 // to GET a single person
 router.get("/:id", getPerson)

@@ -180,3 +180,17 @@ input[type="text"] {
   0%, 80%, 100% { transform: scale(0); }
   40% { transform: scale(1.0); }
 }
+
+/* Existing styles in HomePage.css */
+
+/* Add these styles for the passenger cards */
+.passenger-card {
+  background-color: lightgray; /* Light gray background */
+  /* Add other styling here as needed, like padding, margin, etc. */
+  cursor: pointer;
+}
+
+.passenger-card:hover {
+  background-color: gray; /* Gray background on hover */
+  /* You can also add other hover effects like changing the cursor, etc. */
+}

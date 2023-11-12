@@ -3,14 +3,30 @@ const Person = require("../models/personModel")
 
 // get all Persons
 
-const getPersons = async (req, res) => {  // DONE
+const getPersons = async (req, res) => {
+  // Removed the user_id filter to get all Persons in the database
+  const Persons = await Person.find().sort({ createdAt: -1 });
 
-  const user_id = req.user.id
-
-  const Persons = await Person.find({user_id}).sort({createdAt: -1})
-
-  res.status(200).json(Persons)
+  res.status(200).json(Persons);
 }
+
+
+const getPassengers = async (req, res) => {
+
+  // The key addition here is the type object condition in the query
+  const passengers = await Person.find({ type: "passenger" }).sort({ createdAt: -1 });
+
+  res.status(200).json(passengers);
+};
+
+
+const getDrivers = async (req, res) => {
+
+  // The key addition here is the type object condition in the query
+  const passengers = await Person.find({ type: "driver" }).sort({ createdAt: -1 });
+
+  res.status(200).json(passengers);
+};
 
 
 // get a single Person
@@ -123,5 +139,7 @@ module.exports = {
   getPersons,
   createPerson,
   deletePerson,
-  updatePerson
+  updatePerson,
+  getPassengers,
+  getDrivers
 }

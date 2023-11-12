@@ -1,8 +1,9 @@
-import React, { useState, useRef, useMemo } from 'react';
+import React, { useState, useRef, useMemo, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import L from 'leaflet';
 import './HomePage.css';
 import { useAuthContext } from "../hooks/useAuthContext";
+import NavBar from './NavBar';
 
 
 
@@ -51,11 +52,43 @@ const HomePage = () => {
   const [loading, setLoading] = useState(false);
   const [price, setPrice] = useState('');
   const [processedCoordinates, setProcessedCoordinates] = useState([]);
+  const [passengers, setPassengers] = useState([]);
 
 
-  const handlePassengerClick = () => {
+
+
+
+  const handlePassengerClick = async () => {
     setShowForm(true);
+    const response = await fetch(`http://localhost:4000/api/person/${user._id}`, {
+      credentials: 'include',
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ type: "passenger" })
+    });
   };
+
+
+  const fetchPassengersData = async () => {
+    try {
+      const response = await fetch("http://localhost:4000/api/person/passengers", {
+        credentials: 'include',
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }); if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return await response.json();
+      console.log(response)
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
 
   function flipArrayValues(array) {
     return array.map(subArray => {
@@ -66,43 +99,89 @@ const HomePage = () => {
     });
   }
 
+  const handlePassengerCardClick = async (passenger) => {
+    try {
+      const payload = {
+        userStart: startPosition,
+        userEnd: endPosition,
+        passengerStart: { lat: passenger.start.lat.$numberDecimal, lng: passenger.start.lng.$numberDecimal },
+        passengerEnd: { lat: passenger.end.lat.$numberDecimal, lng: passenger.end.lng.$numberDecimal }
+      };
+  
+      const response = await fetch('http://localhost:4000/api/data/driver', {
+        credentials: 'include',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+  
 
-const handleDriverClick = async () => {
-  try {
-    const payload = {
-      start: startPosition,
-      end: endPosition
-    };
+      const data = await response.json();
+      const originalCoordinates = data.result.trip.routes[0].points.coordinates;
 
-    const response = await fetch('http://localhost:4000/api/data', {
-      method: 'POST',
+      const flippedCoordinates = flipArrayValues(originalCoordinates);
+
+      setProcessedCoordinates(flippedCoordinates);
+      console.log(flippedCoordinates); // Use processedCoordinates as needed
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+  
+
+  const handleDriverClick = async () => {
+
+    const response = await fetch(`http://localhost:4000/api/person/${user._id}`, {
+      credentials: 'include',
+      method: "PATCH",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(payload),
+      body: JSON.stringify({ type: "driver" })
     });
 
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
+
+    try {
+      const payload = {
+        start: startPosition,
+        end: endPosition
+      };
+
+      const response = await fetch('http://localhost:4000/api/data', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      const originalCoordinates = data.result.trip.routes[0].points.coordinates;
+
+      const flippedCoordinates = flipArrayValues(originalCoordinates);
+
+      setProcessedCoordinates(flippedCoordinates);
+      console.log(flippedCoordinates); // Use processedCoordinates as needed
+
+    } catch (error) {
+      console.error('Error:', error);
     }
 
-    const data = await response.json();
-    const originalCoordinates = data.result.trip.routes[0].points.coordinates;
+    const passengersData = await fetchPassengersData();
+    setPassengers(passengersData);
 
-    
-    const flippedCoordinates = flipArrayValues(originalCoordinates);
+  };
 
-    setProcessedCoordinates(flippedCoordinates);
-    console.log(flippedCoordinates); // Use processedCoordinates as needed
-
-
-  } catch (error) {
-    console.error('Error:', error);
-  }
-};
-
-  
-  
 
   const handleContinue = () => {
     setLoading(true);
@@ -117,7 +196,7 @@ const handleDriverClick = async () => {
     setSidebarVisible(!sidebarVisible);
   };
 
-  const redOptions = { color: 'red' }
+  const colorOp = { color: 'lime' }
 
 
   const updateStartPosition = async (newPosition) => {
@@ -138,9 +217,9 @@ const handleDriverClick = async () => {
       const updated = await response.json();
       dispatch({ type: "LOGIN", payload: updated })
     }
-};
+  };
 
-const updateEndPosition = async (newPosition) => {
+  const updateEndPosition = async (newPosition) => {
     console.log(newPosition);
     setEndPosition(newPosition);
 
@@ -157,10 +236,11 @@ const updateEndPosition = async (newPosition) => {
       const updated = await response.json();
       dispatch({ type: "LOGIN", payload: updated })
     }
-};
+  };
 
 
   return (
+
     <div className='Driver'>
       <div className="pull-tab" onClick={toggleSidebar}> </div>
       <div className="instructions">
@@ -171,18 +251,32 @@ const updateEndPosition = async (newPosition) => {
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
         <DraggableMarker content="Start Point" initialPosition={startPosition} onDrag={updateStartPosition} icon={startIcon} />
         <DraggableMarker content="End Point" initialPosition={endPosition} onDrag={updateEndPosition} icon={endIcon} />
-        
-        {processedCoordinates.length > 0 && <Polyline pathOptions= {redOptions} positions={processedCoordinates} color="blue" />}
+
+        {processedCoordinates.length > 0 && <Polyline pathOptions={colorOp} positions={processedCoordinates} color="blue" />}
       </MapContainer>
 
       {sidebarVisible && (
         <div className="sidebar">
-          {!showForm ? (
+          {!showForm && passengers.length === 0 ? (
             <>
               <button className="sidebar-button driver" onClick={handleDriverClick}>Driver</button>
               <button className="sidebar-button passenger" onClick={handlePassengerClick}>Passenger</button>
             </>
-          ) : (
+          ) : null}
+
+          {passengers.length > 0 && (
+            <div className="passenger-cards-container">
+              {passengers.map((passenger) => (
+                <div key={passenger._id} className="passenger-card" onClick={() => handlePassengerCardClick(passenger)}>
+                  <div className="passenger-name">Name: {passenger.name}</div>
+                  <div>Start: ({passenger.start.lat.$numberDecimal}, {passenger.start.lng.$numberDecimal})</div>
+                  <div>End: ({passenger.end.lat.$numberDecimal}, {passenger.end.lng.$numberDecimal})</div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {showForm ? (
             <>
               {loading ? (
                 <div className="loading">
@@ -201,10 +295,12 @@ const updateEndPosition = async (newPosition) => {
                 </>
               )}
             </>
-          )}
+          ) : null}
         </div>
       )}
+
     </div>
+
   );
 };
 
