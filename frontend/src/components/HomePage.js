@@ -78,7 +78,7 @@ const HomePage = () => {
       });
       const data = await response.json();
       console.log("hi", data)
-      setUserName(data.name); // Updating the state with the fetched name
+      setUserName(data[0].name); // Updating the state with the fetched name
     } catch (error) {
       console.error("Error fetching data:", error);
     }
