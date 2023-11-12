@@ -40,6 +40,9 @@ const personSchema = new Schema({
   },
   end: { // end coords
     type: coords, // Array of numbers
+  },
+  price: { // end coords
+    type: Number, // Array of numbers
   }
 });
 

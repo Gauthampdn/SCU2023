@@ -33,7 +33,8 @@ passport.use(new GoogleStrategy({
           type: "passenger",
           looking: "yes",
           start: { lat: 37.756991, lng: -122.436894},
-          end: { lat: 37.756991, lng: -122.436894}
+          end: { lat: 37.756991, lng: -122.436894},
+          price: 0
         });
 
 
